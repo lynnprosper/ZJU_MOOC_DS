@@ -1,0 +1,61 @@
+#include <iostream>
+
+//key: Algorithm-- start from the first one, sum every one; if the sum is negative, it means the sequence is not it.
+// record the sequence from next.
+
+using namespace std;
+int *Init_Array(int n);
+void MaxSeq(int *p, int n);
+
+int main()
+{
+	int n;
+	cin >> n;
+	int *p = Init_Array(n);		//initialize the array;
+	MaxSeq(p, n);
+
+	return 0;
+}
+
+int *Init_Array(int n)
+{
+	int *pArray = new int[n];
+	int i = 0;
+	while (i < n)
+		cin >> pArray[i++];
+
+	return pArray;
+}
+
+void MaxSeq(int *p, int n)
+{
+	int maxsum, thisum, tempfirst, i, firstone, endone;
+
+	tempfirst = firstone = 0;
+	endone = n - 1;
+	thisum = i = 0;
+	maxsum = -1;
+	while (i < n)
+	{
+		thisum += p[i];			//record the sum, if thisum is greater than maxsum, 
+		if (thisum > maxsum)	//let thisum be maxsum;
+		{
+			maxsum = thisum;
+			endone = i;
+			firstone = tempfirst;
+		}
+		else if (thisum < 0)	//record a new startpoint; thisum can't equal '0' either because 0 belongs to the sequense;
+		{
+			thisum = 0;
+			tempfirst = i + 1;
+		}
+		i++;
+	}
+
+	if (maxsum == -1)
+		cout << "0 " << p[0] << ' ' << p[n - 1] << endl;
+	else
+	{
+		cout << maxsum << ' ' << p[firstone] << ' ' << p[endone] << endl;
+	}
+}
