@@ -1,0 +1,111 @@
+#include <iostream>
+
+using namespace std;
+typedef int ElementType;
+typedef struct Node *PtrToNode;
+struct Node
+{
+	ElementType Data;
+	PtrToNode Next;
+};
+typedef PtrToNode List;
+
+List Read();
+void Print(List L);
+List Merge(List L1, List L2);
+
+int main()
+{
+	List L1, L2, L;
+	L1 = Read();
+	L2 = Read();
+	L = Merge(L1, L2);
+
+	Print(L);
+	Print(L1);
+	Print(L2);
+
+	return 0;
+}
+
+List Read()
+{
+	List pHead = new Node;
+	pHead->Next = NULL;
+	List p = pHead;
+	int n, t, i = 0;
+	cin >> n;
+
+	while (i < n)
+	{
+		cin >> t;
+		List pNew = new Node;
+		pNew->Data = t;
+		pNew->Next = NULL;
+		p->Next = pNew;
+		p = pNew;
+		i++;
+	}
+	return pHead;
+}
+
+void Print(List L)
+{
+	List p = L->Next;
+	int flag = 1;
+	if (p == NULL)
+		cout << "NULL";
+	else
+	{
+		while (p)
+		{
+			if (flag)
+			{
+				cout << p->Data;
+				flag = 0;
+			}
+			else
+				cout << ' ' << p->Data;
+
+			p = p->Next;
+		}
+	}
+
+	cout << endl;
+}
+
+List Merge(List L1, List L2)
+{
+	List pHead = new Node;      //create L3's head node;
+	pHead->Next = NULL;
+	List p1 = L1->Next;
+	List p2 = L2->Next;
+	List p3 = pHead;
+
+	while (p1 && p2)
+	{
+		if (p1->Data < p2->Data)
+		{
+			p3->Next = p1;
+			p3 = p1;
+			p1 = p1->Next;
+		}
+		else
+		{
+			p3->Next = p2;
+			p3 = p2;
+			p2 = p2->Next;
+		}
+
+	}
+
+	if (p1)     //connect the rest to L3;
+		p3->Next = p1;
+	if (p2)
+		p3->Next = p2;
+
+	L1->Next = NULL;
+	L2->Next = NULL;
+
+	return pHead;
+}
