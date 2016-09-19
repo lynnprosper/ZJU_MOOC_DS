@@ -1,0 +1,56 @@
+#include <iostream>
+#include<stack>
+
+using namespace std;
+
+//key: use 'STL'-template-'stack';
+//imitate the operation of stack;
+int main()
+{
+	int n, k;
+	unsigned int m;
+	stack<int> st;
+	cin >> m >> n >> k;
+	int *flag = new int[n];
+
+	int i, j, t, num;
+	for (i = 0; i < k; i++)
+	{
+		t = flag[i] = 1;
+		for (j = 0; j < n; j++)
+		{
+			cin >> num;
+			if (flag[i])
+			{
+				while (st.empty() || st.top() != num)	// if unequal, push the number;
+				{
+					st.push(t);
+					t++;
+
+					if (st.size() > m)
+					{
+						flag[i] = 0;
+						break;
+					}
+
+				}
+			}
+			if (flag[i] && !st.empty() && st.top() == num)
+				st.pop();
+		}
+		while (!st.empty())		// clear the stack;
+			st.pop();
+
+	}
+
+	for (i = 0; i < k; i++)
+	{
+		if (flag[i])
+			printf("YES\n");
+		else
+			printf("NO\n");
+
+	}
+
+	return 0;
+}
