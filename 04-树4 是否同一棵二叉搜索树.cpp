@@ -14,6 +14,11 @@ int tJudge(node *head, int n);
 void flagReset(node *head);
 void tDelete(node *head);
 
+/*
+注意：有一个测试点无法通过，未发现原因。
+思路：先建立模板树，然后依次将待测试树和其比较。
+比较过的结点的标志设为1，若该结点未比较过且其数据不等，则两树不同。
+*/
 int main()
 {
 	int n, line, i;
@@ -101,12 +106,12 @@ int tJudge(node *head, int n)
 			}
 		}
 	}
-	if (fflag == 0)
+	if (fflag == 0 || T == NULL)
 		return 0;
 	else
 		return 1;
 }
-void flagReset(node *head)
+void flagReset(node *head)	//需要恢复结点的标志。
 {
 	if (head->left)
 		head->left->flag = 0;
