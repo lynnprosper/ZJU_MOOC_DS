@@ -84,12 +84,12 @@ BinTree Delete(BinTree BST, ElementType X)
 			BST->Data = Temp->Data;
 			BST->Right = Delete(BST->Right, Temp->Data);
 		}
-		else
+		else	//有一个子结点或没有。
 		{
 			Temp = BST;
-			if (BST->Left)
+			if (BST->Left) 	//只有左子结点；
 				BST = BST->Left;
-			else
+			else	//只有右子结点；
 				BST = BST->Right;
 			free(Temp);
 		}
