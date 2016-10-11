@@ -35,6 +35,7 @@ int main()
 	Graph * G = Build_G();	//建立图；
 	OutputE(G);	//输出边；
 
+	
 	return 0;
 }
 
