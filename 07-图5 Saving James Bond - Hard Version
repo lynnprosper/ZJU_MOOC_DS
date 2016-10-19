@@ -1,0 +1,160 @@
+#include<iostream>
+#include<algorithm>	//使用sort（）函数；
+#include<vector>
+#include<queue>
+using namespace std;
+
+struct Node
+{
+	int x, y;	//点坐标；
+	double distance;	//存储每点到原点的距离；
+};
+
+/*
+思路：问题核心是无向图单源最短路径问题，所以算法采用BFS了；
+需解决：
+1. 单独处理第一跳。题目要求存在多个最短时，输出第一跳的距离最小，所以我们可以把所有点距原点距离从小到大排序，
+然后再对各点进行BFS。
+2.路径输出的话，只有采用栈了。
+*/
+double Distance(Node a, Node b);	//求两点距离；
+void Init_data(vector<Node> &np, int N);	//读入数据
+void Fir_Step(vector<int> &fp, vector<Node> &np, int N, int ra);	//处理第一跳；
+bool inc_cmp(const Node &ta, const Node &tb);	//sort()函数的compare函数；
+void bfs(int v, vector<Node> &np, int N, int ra);	//BFS;
+int IsBorder(vector<Node> &np, int v, int ra);	//判断从该点能否跳到岸上；
+void Print(int *path, int x, vector<Node> &np);	//递归输出；
+
+int main()
+{
+	vector<Node> np;
+	vector<int> fp;	//用来存储第一跳符合要求的点的编号；
+	int ra, N, tN;
+	cin >> tN >> ra;
+	Init_data(np, tN);
+	N = np.size();
+	Fir_Step(fp, np, N, ra);//处理第一跳；
+
+	if (ra > 42)
+		cout << 1 << endl;	// 此处是直接跳到岸上，输出1，不用输出点坐标（没有踩，输出啥）；
+	else
+	{
+		for (int i = 0; i < (int)fp.size(); i++)	//第一跳的每点bfs；
+			bfs(i, np, N, ra);
+		cout << 0 << endl;
+	}
+
+	return 0;
+}
+
+double Distance(Node a, Node b)	//求两点距离；
+{
+	return(sqrt(pow(a.x - b.x, 2) + pow(a.y - b.y, 2)));
+}
+
+void Init_data(vector<Node> &np, int N)	//读入数据；
+{
+	Node tem;
+	int t1, t2;
+	double d;
+	for (int i = 0; i < N; i++)
+	{
+		cin >> t1 >> t2;
+		d = sqrt(t1*t1 + t2*t2);
+		if (max(abs(t1), abs(t2)) >= 50 || max(abs(t1), abs(t2)) < 8)	//此处是为了淘汰掉那些不在水中的点；
+			continue;
+		tem.x = t1;
+		tem.y = t2;
+		tem.distance = d;
+		np.push_back(tem);
+	}
+
+	return;
+}
+
+void Fir_Step(vector<int> &fp, vector<Node> &np, int N, int ra)//处理第一跳；
+{
+	sort(np.begin(), np.end(), inc_cmp);	//对距离进行升序排序；
+
+	for (int i = 0; i < N; i++)
+	{
+		if (np[i].distance <= (ra + 7.5))	//fp里存储符合要求的第一跳的点编号；
+			fp.push_back(i);
+		else
+			break;
+	}
+
+	return;
+}
+
+bool inc_cmp(const Node &ta, const Node &tb)
+{	
+	return(ta.distance < tb.distance);
+}
+
+void bfs(int v, vector<Node> &np, int N, int ra)
+{
+	int *path = new int[N];	//存储路径，表示从起点v到i的上一个结点；
+	for (int i = 0; i < N; i++)
+		path[i] = -1;	//初始为-1，表示无父结点；
+	int *dist = new int[N];	//存储路径长度；
+	for (int i = 0; i < N; i++)
+	{
+		if (i == v)
+			dist[i] = 1;	//相等，表示路径为1（因为我们是从小岛上跳过来的）
+		else
+			dist[i] = 0;
+	}
+	queue<int> Q;
+
+	int x, flag = 0;
+	Q.push(v);
+	while (!Q.empty())
+	{
+		x = Q.front();
+		Q.pop();
+		if (IsBorder(np, x, ra))	//判断从该点能否跳到岸上；
+		{
+			flag = 1;
+			break;
+		}
+		else
+		{
+			for (int i = 0; i < N; i++)
+			{
+				if (dist[i] == 0 && Distance(np[x], np[i]) <= ra)
+				{
+					path[i] = x;
+					dist[i] = dist[x] + 1;
+					Q.push(i);
+				}
+			}
+		}
+	}
+
+	if (flag)
+	{
+		cout << dist[x] + 1<< endl;
+		Print(path, x, np);
+		exit(0);
+	}
+
+	return;
+}
+
+int IsBorder(vector<Node> &np, int v, int ra)	//判断从该点能否跳到岸上；
+{
+	if (50 - abs(np[v].x) <= ra || 50 - abs(np[v].y) <= ra)
+		return 1;
+	else
+		return 0;
+}
+
+void Print(int *path, int x, vector<Node> &np)
+{
+	if (path[x] != -1)
+		Print(path, path[x], np);
+	cout << np[x].x << ' ' << np[x].y << endl;
+
+	return;
+}
